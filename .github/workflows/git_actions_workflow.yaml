@@ -81,6 +81,10 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/git_actions_repo_2:latest
+      - name: Running the docker image by pulling
+        run: |
+          docker pull pradeep3014/git_actions_repo_2:latest
+          docker run git_actions_repo_2:latest
   
   log:
     
