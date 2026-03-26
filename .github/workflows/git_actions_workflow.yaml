@@ -1,0 +1,99 @@
+name: Demonstrating the CI/CD solution using github actions
+
+on:
+
+  push:
+    branches:
+      - main
+  
+
+
+jobs:
+
+  testing:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout git repo
+        uses: actions/checkout@v5
+
+      - name: Testing the app
+        run: npm run test
+  
+  running_the_app:
+
+    needs-on:
+      - testing
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout git repo
+        uses: actions/checkout@v5
+      
+      - name: Running server file
+        run: npm run server
+    
+  
+  building_docker_image:
+
+    needs-on:
+      - running_the_app
+    
+    runs-on: ubuntu-latest
+  
+    steps:
+
+      - name: checkout git repo
+        uses: actions/checkout@v5
+      
+      - name: Installing docker engine
+        run: |
+          sudo apt update -y
+          sudo apt install ca-certificates curl
+          sudo install -m 0755 -d /etc/apt/keyrings
+          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+          sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+          Types: deb
+          URIs: https://download.docker.com/linux/ubuntu
+          Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+          Components: stable
+          Signed-By: /etc/apt/keyrings/docker.asc
+          EOF
+
+          sudo apt update -y
+        
+      - name: Installing docker additional packages
+        run: sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+      
+      - name: Docker hub Credentials Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Pushing into docker hub
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/git_actions_repo_2:latest
+  
+  log:
+    
+    runs-on: ubuntu-latest
+    needs-on: 
+      - building_docker_image
+    
+    steps:
+      - name: Logging success status
+        run: echo "All Steps are completed successfully. Now u can pull the docker image and run it."
+
+
+
+            
+            
+            
