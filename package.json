@@ -1,0 +1,22 @@
+{
+  "name": "git_actions_repo_1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.test.js",
+    "server" : "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baludev3014/git_actions_repo_2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/baludev3014/git_actions_repo_2/issues"
+  },
+  "homepage": "https://github.com/baludev3014/git_actions_repo_2#readme"
+}
